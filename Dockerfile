@@ -17,14 +17,14 @@ RUN npm ci
 COPY gulpfile.js ./
 COPY assets/css ./assets/css
 
-# Skompiluj SCSS → CSS
+# Skompiluj SCSS → CSS (cache-bust: 2026-05-31)
 RUN npx gulp styles
 
-# Debug: overenie výstupu kompilácie
-RUN echo "=== Compiled CSS files ===" \
-    && find assets/css -name "*.min.css" | sort \
-    && echo "=== k-bg v backend_layout ===" \
-    && grep -c "k-bg" assets/css/layouts/backend_layout.min.css && echo "OK" || echo "CHYBA: k-bg sa nenaslo"
+# Debug: overenie výstupu kompilácie (.css aj .min.css)
+RUN echo "=== backend_layout.css ===" \
+    && grep -c "k-bg" assets/css/layouts/backend_layout.css && echo "CSS OK" || echo "CHYBA: backend_layout.css bez k-bg" \
+    && echo "=== backend_layout.min.css ===" \
+    && grep -c "k-bg" assets/css/layouts/backend_layout.min.css && echo "MIN OK" || echo "CHYBA: min bez k-bg"
 
 # ═══════════════════════════════════════════════════════════
 
@@ -34,9 +34,11 @@ FROM alextselegidis/easyappointments:latest
 # Nahraď skompilované CSS súbory custom verziou
 COPY --from=css-builder /build/assets/css /var/www/html/assets/css
 
-# Overenie v stage 2
-RUN echo "=== backend_layout v produkcii ===" \
-    && grep -c "k-bg" /var/www/html/assets/css/layouts/backend_layout.min.css && echo "OK" || echo "CHYBA"
+# Overenie v stage 2 — EA načítava .css, nie .min.css!
+RUN echo "=== backend_layout.css v produkcii ===" \
+    && grep -c "k-bg" /var/www/html/assets/css/layouts/backend_layout.css && echo "CSS OK" || echo "CHYBA: .css bez k-bg!" \
+    && echo "=== karin.css v produkcii ===" \
+    && grep -c "k-bg\|FDFAF5\|2C1A0E" /var/www/html/assets/css/themes/karin.css && echo "KARIN OK" || echo "CHYBA: karin.css nenajdeny"
 
 # Custom hlavička (salon názov namiesto EA brandingu)
 COPY application/views/components/backend_header.php /var/www/html/application/views/components/backend_header.php
