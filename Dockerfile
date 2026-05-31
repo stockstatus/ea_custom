@@ -25,6 +25,10 @@ RUN npx gulp styles
 # Stage 2: Produkčný image
 FROM alextselegidis/easyappointments:latest
 
+# Oprava: Apache načíta viac MPM modulov naraz — ponechaj len prefork
+RUN a2dismod mpm_event mpm_worker 2>/dev/null || true && \
+    a2enmod mpm_prefork
+
 # Nahraď skompilované CSS súbory custom verziou
 COPY --from=css-builder /build/assets/css /var/www/html/assets/css
 
