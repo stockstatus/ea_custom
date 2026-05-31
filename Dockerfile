@@ -25,15 +25,18 @@ RUN npx gulp styles
 # Stage 2: Produkčný image
 FROM alextselegidis/easyappointments:latest
 
-# Oprava: Apache načíta viac MPM modulov naraz — odstráň konfliktné symlinky
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.conf \
-          /etc/apache2/mods-enabled/mpm_event.load \
-          /etc/apache2/mods-enabled/mpm_worker.conf \
-          /etc/apache2/mods-enabled/mpm_worker.load \
+# Debug: ukáž čo je v mods-enabled pred opravou (viditeľné v Railway build logu)
+RUN echo "=== MPM files before fix ===" \
+    && ls /etc/apache2/mods-enabled/ | grep mpm || echo "(žiadne mpm súbory)"
+
+# Oprava: odober VŠETKY mpm_* súbory cez find, potom enable len prefork
+RUN find /etc/apache2/mods-enabled/ -name "mpm_*" -delete \
     && ln -sf /etc/apache2/mods-available/mpm_prefork.load \
               /etc/apache2/mods-enabled/mpm_prefork.load \
     && ln -sf /etc/apache2/mods-available/mpm_prefork.conf \
-              /etc/apache2/mods-enabled/mpm_prefork.conf
+              /etc/apache2/mods-enabled/mpm_prefork.conf \
+    && echo "=== MPM files after fix ===" \
+    && ls /etc/apache2/mods-enabled/ | grep mpm
 
 # Nahraď skompilované CSS súbory custom verziou
 COPY --from=css-builder /build/assets/css /var/www/html/assets/css
