@@ -25,9 +25,15 @@ RUN npx gulp styles
 # Stage 2: Produkčný image
 FROM alextselegidis/easyappointments:latest
 
-# Oprava: Apache načíta viac MPM modulov naraz — ponechaj len prefork
-RUN a2dismod mpm_event mpm_worker 2>/dev/null || true && \
-    a2enmod mpm_prefork
+# Oprava: Apache načíta viac MPM modulov naraz — odstráň konfliktné symlinky
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.conf \
+          /etc/apache2/mods-enabled/mpm_event.load \
+          /etc/apache2/mods-enabled/mpm_worker.conf \
+          /etc/apache2/mods-enabled/mpm_worker.load \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.load \
+              /etc/apache2/mods-enabled/mpm_prefork.load \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.conf \
+              /etc/apache2/mods-enabled/mpm_prefork.conf
 
 # Nahraď skompilované CSS súbory custom verziou
 COPY --from=css-builder /build/assets/css /var/www/html/assets/css
