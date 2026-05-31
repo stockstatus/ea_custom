@@ -15,8 +15,7 @@ RUN npm ci
 
 # Skopíruj len to čo treba na kompiláciu
 COPY gulpfile.js ./
-# Kopíruj z assets/css/css/ priamo do assets/css/ — opravuje dvojité vnorenie
-COPY assets/css/css ./assets/css
+COPY assets/css ./assets/css
 
 # Skompiluj SCSS → CSS
 RUN npx gulp styles
