@@ -22,6 +22,13 @@ if [ ! -f "$CONFIG" ]; then
     sed -i "s|define('APP_URL', '.*')|define('APP_URL', '${APP_URL:-http://localhost}')|" "$CONFIG"
 
     echo "config.php created."
+    echo "=== DB settings in config.php ==="
+    grep -E "DB_HOST|DB_NAME|DB_USERNAME|DB_PORT|APP_URL" "$CONFIG"
 fi
+
+# Stream Apache error log to stdout so Railway captures PHP errors
+mkdir -p /var/log/apache2
+touch /var/log/apache2/error.log
+tail -f /var/log/apache2/error.log &
 
 exec apache2-foreground
