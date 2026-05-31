@@ -7,6 +7,32 @@
  */
 ?>
 
+<style>
+:root {
+    --k-bg: #2C1A0E;
+    --k-bg-mid: #3d2510;
+    --k-gold: #C9963C;
+    --k-gold-pale: #F5E6C4;
+    --k-text: #F5E6C4;
+    --k-text-muted: #C4A882;
+    --k-border: rgba(201, 150, 60, 0.25);
+}
+body { background-color: var(--k-bg) !important; color: var(--k-text) !important; }
+main { background-color: var(--k-bg); }
+#calendar-page #calendar-toolbar,
+.backend-page > .container-fluid > .row:first-child { background-color: var(--k-bg-mid) !important; }
+.fc-col-header { background-color: var(--k-bg-mid); }
+.fc-timegrid-slot, .fc-daygrid-day { background-color: var(--k-bg) !important; }
+.fc-col-header-cell { background-color: var(--k-bg-mid) !important; color: var(--k-gold-pale) !important; }
+.card { background-color: var(--k-bg-mid) !important; border-color: var(--k-border) !important; color: var(--k-text) !important; }
+.table { color: var(--k-text) !important; }
+.form-control, .form-select { background-color: var(--k-bg-mid) !important; color: var(--k-text) !important; border-color: var(--k-border) !important; }
+.modal-content { background-color: var(--k-bg-mid) !important; color: var(--k-text) !important; }
+.dropdown-menu { background-color: var(--k-bg-mid) !important; border-color: var(--k-border) !important; }
+.dropdown-item { color: var(--k-text) !important; }
+.dropdown-item:hover { background-color: var(--k-bg) !important; }
+</style>
+
 <nav id="header" class="navbar navbar-expand-md navbar-dark">
     <div id="header-logo" class="navbar-brand">
         <span id="salon-name">Masáže Karin</span>
