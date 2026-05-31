@@ -26,7 +26,7 @@ RUN npx gulp styles
 FROM alextselegidis/easyappointments:latest
 
 # Nahraď skompilované CSS súbory custom verziou
-COPY --from=css-builder /build/assets/css /var/www/html/assets/css
+COPY --from=css-builder /build/assets/css/css /var/www/html/assets/css
 
 # Custom hlavička (salon názov namiesto EA brandingu)
 COPY application/views/components/backend_header.php /var/www/html/application/views/components/backend_header.php
