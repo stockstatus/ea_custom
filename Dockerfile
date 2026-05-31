@@ -34,11 +34,9 @@ FROM alextselegidis/easyappointments:latest
 # Nahraď skompilované CSS súbory custom verziou
 COPY --from=css-builder /build/assets/css /var/www/html/assets/css
 
-# Overenie v stage 2 — EA načítava .css, nie .min.css!
-RUN echo "=== backend_layout.css v produkcii ===" \
-    && grep -c "k-bg" /var/www/html/assets/css/layouts/backend_layout.css && echo "CSS OK" || echo "CHYBA: .css bez k-bg!" \
-    && echo "=== karin.css v produkcii ===" \
-    && grep -c "k-bg\|FDFAF5\|2C1A0E" /var/www/html/assets/css/themes/karin.css && echo "KARIN OK" || echo "CHYBA: karin.css nenajdeny"
+# Priamo appendni dark téma do backend_layout.css (EA načítava .css nie .min.css)
+RUN printf '\n:root{--k-bg:#2C1A0E;--k-bg-mid:#3d2510;--k-gold:#C9963C;--k-gold-pale:#F5E6C4;--k-text:#F5E6C4;--k-border:rgba(201,150,60,.25)}body{background-color:var(--k-bg)!important;color:var(--k-text)!important}main{background-color:var(--k-bg)}\n' \
+    >> /var/www/html/assets/css/layouts/backend_layout.css
 
 # Custom hlavička (salon názov namiesto EA brandingu)
 COPY application/views/components/backend_header.php /var/www/html/application/views/components/backend_header.php
