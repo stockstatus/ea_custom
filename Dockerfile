@@ -15,7 +15,8 @@ RUN npm ci
 
 # Skopíruj len to čo treba na kompiláciu
 COPY gulpfile.js ./
-COPY assets/css ./assets/css
+# Kopíruj z assets/css/css/ priamo do assets/css/ — opravuje dvojité vnorenie
+COPY assets/css/css ./assets/css
 
 # Skompiluj SCSS → CSS
 RUN npx gulp styles
@@ -26,7 +27,7 @@ RUN npx gulp styles
 FROM alextselegidis/easyappointments:latest
 
 # Nahraď skompilované CSS súbory custom verziou
-COPY --from=css-builder /build/assets/css/css /var/www/html/assets/css
+COPY --from=css-builder /build/assets/css /var/www/html/assets/css
 
 # Custom hlavička (salon názov namiesto EA brandingu)
 COPY application/views/components/backend_header.php /var/www/html/application/views/components/backend_header.php
